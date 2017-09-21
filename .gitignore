@@ -6,3 +6,9 @@
 
 # Don't ignore the LICENSE file
 !LICENSE
+
+# Don't ignore xml files defining various configurations
+!*.xml
+!jobs/
+!jobs/*/
+!jobs/*/config.xml
