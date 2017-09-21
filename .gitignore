@@ -12,3 +12,7 @@
 !jobs/
 !jobs/*/
 !jobs/*/config.xml
+
+# Don't ignore plugins directory
+!plugins/
+!plugins/*/
