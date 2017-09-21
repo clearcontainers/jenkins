@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# Don't ignore .gitignore
+!.gitignore
+
+# Don't ignore the LICENSE file
+!LICENSE
