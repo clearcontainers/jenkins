@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xyz.quoidneufdocker.jenkins.dockerslaves.DockerSlaves plugin="docker-slaves@1.0.7">
+  <dockerProvisionerFactory class="xyz.quoidneufdocker.jenkins.dockerslaves.DefaultDockerProvisionerFactory">
+    <dockerDriverFactory class="xyz.quoidneufdocker.jenkins.dockerslaves.drivers.PlainDockerAPIDockerDriverFactory">
+      <dockerHostSource class="xyz.quoidneufdocker.jenkins.dockerslaves.DefaultDockerHostSource">
+        <dockerServerEndpoint plugin="docker-commons@1.8"/>
+      </dockerHostSource>
+    </dockerDriverFactory>
+    <scmImage>buildpack-deps:scm</scmImage>
+    <remotingImage>jenkins/agent/</remotingImage>
+  </dockerProvisionerFactory>
+  <maxSlaves>10</maxSlaves>
+</xyz.quoidneufdocker.jenkins.dockerslaves.DockerSlaves>

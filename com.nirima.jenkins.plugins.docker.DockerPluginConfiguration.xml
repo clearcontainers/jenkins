@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<com.nirima.jenkins.plugins.docker.DockerPluginConfiguration plugin="docker-plugin@0.16.2">
+  <pullFix>true</pullFix>
+  <registryList class="empty-list"/>
+</com.nirima.jenkins.plugins.docker.DockerPluginConfiguration>
