@@ -17,12 +17,14 @@
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <refspec>+refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*</refspec>
         <url>https://github.com/clearcontainers/shim.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>*/master</name>
+        <name>${sha1}</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
@@ -88,22 +90,14 @@
 
 set -e
 
-export GOROOT=/usr/local/go
-mkdir -p $HOME/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+export ghprbPullId
+export ghprbTargetBranch
 
-echo &quot;GOROOT=$GOROOT&quot;
-echo &quot;GOPATH=$GOPATH&quot;
-echo &quot;PATH=$PATH&quot;
-echo &quot;USER=$USER&quot;
+cd $HOME
+git clone https://github.com/clearcontainers/tests.git
+cd tests
 
-export CI=true
-go get github.com/clearcontainers/shim || true
-cd $GOPATH/src/github.com/clearcontainers/shim
-git fetch origin pull/${ghprbPullId}/head &amp;&amp; git checkout FETCH_HEAD &amp;&amp; git rebase origin/${ghprbTargetBranch}
-sudo -E PATH=$PATH bash -c &quot;.ci/setup.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;.ci/run.sh&quot;</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/shim&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
