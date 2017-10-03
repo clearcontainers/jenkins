@@ -4,7 +4,7 @@
     <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
     <string>OldData</string>
   </disabledAdministrativeMonitors>
-  <version>2.60.2</version>
+  <version>2.73.1</version>
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
@@ -21,6 +21,7 @@
         <string>grahamwhaley</string>
         <string>chavafg</string>
         <string>jcvenegas</string>
+        <string>jodh-intel</string>
       </adminUserNameList>
       <authenticatedUserReadPermission>true</authenticatedUserReadPermission>
       <useRepositoryPermissions>true</useRepositoryPermissions>
@@ -35,7 +36,7 @@
     <githubWebUri>https://github.com</githubWebUri>
     <githubApiUri>https://api.github.com</githubApiUri>
     <clientID>dde1b1de183181e018b7</clientID>
-    <clientSecret>{AQAAABAAAAAwWLmVHCPZQnaZy6txJ2YqPk0kZup4D6uGbL1RDhzMSeUsTsFpkOzKa7rKY+jgUF5sVTGn/aQ8Tpnu1J3kapjgcw==}</clientSecret>
+    <clientSecret>{AQAAABAAAAAwVoMsqU2mSX4irkt++BM6iqNUdmoRFNp0wfAf/JFRILH8iLh6oFruX9TbMVdgOCloJQMD5Vf6asMrWXyAzLCh+w==}</clientSecret>
     <oauthScopes>read:org,user:email</oauthScopes>
   </securityRealm>
   <disableRememberMe>false</disableRememberMe>
@@ -71,47 +72,43 @@
           <usageMode>EXCLUSIVE</usageMode>
           <shutdownOnIdle>false</shutdownOnIdle>
           <imageTopLevelType>advanced</imageTopLevelType>
-          <imageReferenceType>reference</imageReferenceType>
+          <imageReferenceType>custom</imageReferenceType>
           <builtInImage>Ubuntu 16.04 LTS</builtInImage>
           <isInstallGit>true</isInstallGit>
           <isInstallMaven>false</isInstallMaven>
           <isInstallDocker>true</isInstallDocker>
+          <image>https://ccjenkins.blob.core.windows.net/container-ccjenkins/ubuntu-16-04-201708151.vhd</image>
           <osType>Linux</osType>
-          <imagePublisher>Canonical</imagePublisher>
-          <imageOffer>UbuntuServer</imageOffer>
-          <imageSku>16.04-LTS</imageSku>
-          <imageVersion>latest</imageVersion>
           <agentLaunchMethod>SSH</agentLaunchMethod>
           <preInstallSsh>true</preInstallSsh>
-          <initScript># Install java
-sudo add-apt-repository ppa:openjdk-r/ppa -y
-sudo apt-get -y update
-sudo apt-get install openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk -y
+          <initScript># Stop unattended-upgrades service
+sudo systemctl stop unattended-upgrades
+sudo systemctl disable unattended-upgrades
+sudo pkill -f dpkg
+sudo pkill -f apt-get
+sudo rm -f /var/lib/dpkg/lock
+sudo rm -f /var/lib/apt/lists/lock
+sudo rm -f /var/cache/apt/archives/lock
 
-# Install git
-sudo apt-get install -y git
+# Install Java JRE and JDK for Jenkins agent
+sudo apt update -y
+sudo apt install -y openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk
 
-# Install make
-sudo apt-get install -y make
+# Install git, make and gcc
+sudo apt install -y git make gcc
 
-# Install gcc
-sudo apt-get install -y gcc
-
-echo &quot;USER=$USER&quot;
-
-# Install docker
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+# Install Docker
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
-sudo apt-get -y update
-sudo apt-get install -y docker-ce
+sudo apt update -y
+sudo apt install -y docker-ce
 sudo gpasswd -a ${USER} docker
 sudo chmod g+rw /var/run/docker.sock
 
-# Install go
+# Install Go
 curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
-</initScript>
+sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
           <retentionTimeInMin>1</retentionTimeInMin>
@@ -123,7 +120,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
           <jvmOptions></jvmOptions>
           <templateDisabled>false</templateDisabled>
           <templateStatusDetails></templateStatusDetails>
-          <templateVerified>false</templateVerified>
+          <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
@@ -142,46 +139,43 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
           <usageMode>EXCLUSIVE</usageMode>
           <shutdownOnIdle>false</shutdownOnIdle>
           <imageTopLevelType>advanced</imageTopLevelType>
-          <imageReferenceType>reference</imageReferenceType>
-          <builtInImage>Windows Server 2016</builtInImage>
+          <imageReferenceType>custom</imageReferenceType>
+          <builtInImage>Ubuntu 16.04 LTS</builtInImage>
           <isInstallGit>false</isInstallGit>
           <isInstallMaven>false</isInstallMaven>
           <isInstallDocker>false</isInstallDocker>
+          <image>https://ccjenkins.blob.core.windows.net/container-ccjenkins/ubuntu-17-04-20170922.vhd</image>
           <osType>Linux</osType>
-          <imagePublisher>Canonical</imagePublisher>
-          <imageOffer>UbuntuServer</imageOffer>
-          <imageSku>17.04</imageSku>
-          <imageVersion>latest</imageVersion>
           <agentLaunchMethod>SSH</agentLaunchMethod>
           <preInstallSsh>true</preInstallSsh>
-          <initScript># Install java
-sudo apt-get -y update
-sudo apt-get install openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk -y
+          <initScript># Stop unattended-upgrades service
+sudo systemctl stop unattended-upgrades
+sudo systemctl disable unattended-upgrades
+sudo pkill -f dpkg
+sudo pkill -f apt-get
+sudo rm -f /var/lib/dpkg/lock
+sudo rm -f /var/lib/apt/lists/lock
+sudo rm -f /var/cache/apt/archives/lock
 
-# Install git
-sudo apt-get install -y git
+# Install Java JRE and JDK for Jenkins agent
+sudo apt update -y
+sudo apt install -y openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk
 
-# Install make
-sudo apt-get install -y make
-
-# Install gcc
-sudo apt-get install -y gcc
-
-echo &quot;USER=$USER&quot;
+# Install git, make and gcc
+sudo apt install -y git make gcc
 
 # Install docker
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
-sudo apt-get -y update
-sudo apt-get install -y docker-ce
+sudo apt update -y
+sudo apt install -y docker-ce
 sudo gpasswd -a ${USER} docker
 sudo chmod g+rw /var/run/docker.sock
 
 # Install go
 curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
-</initScript>
+sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
           <retentionTimeInMin>1</retentionTimeInMin>
@@ -193,16 +187,16 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
           <jvmOptions></jvmOptions>
           <templateDisabled>false</templateDisabled>
           <templateStatusDetails></templateStatusDetails>
-          <templateVerified>false</templateVerified>
+          <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
         <com.microsoft.azure.vmagent.AzureVMAgentTemplate>
-          <templateName>jenkins-azure-vm-ubuntu-17-04-power-template</templateName>
-          <templateDesc>Ubuntu 17.04 Template for Jenkins VM agents POWER on Azure</templateDesc>
-          <labels>ubuntu_17_04_azure_cloud_power</labels>
+          <templateName>jenkins-azure-vm-fedora-26</templateName>
+          <templateDesc>Fedora 26 Template for Jenkins VM agents on Azure</templateDesc>
+          <labels>fedora_26_azure_cloud</labels>
           <location>West US 2</location>
-          <virtualMachineSize>Standard_D32s_v3</virtualMachineSize>
+          <virtualMachineSize>Standard_D4s_v3</virtualMachineSize>
           <storageAccountNameReferenceType>new</storageAccountNameReferenceType>
           <diskType>managed</diskType>
           <newStorageAccountName>ccjenkins</newStorageAccountName>
@@ -212,46 +206,33 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
           <usageMode>EXCLUSIVE</usageMode>
           <shutdownOnIdle>false</shutdownOnIdle>
           <imageTopLevelType>advanced</imageTopLevelType>
-          <imageReferenceType>reference</imageReferenceType>
-          <builtInImage>Windows Server 2016</builtInImage>
+          <imageReferenceType>custom</imageReferenceType>
+          <builtInImage>Ubuntu 16.04 LTS</builtInImage>
           <isInstallGit>false</isInstallGit>
           <isInstallMaven>false</isInstallMaven>
           <isInstallDocker>false</isInstallDocker>
+          <image>https://ccjenkins.blob.core.windows.net/container-ccjenkins/fedora-cloud-26.vhd</image>
           <osType>Linux</osType>
-          <imagePublisher>Canonical</imagePublisher>
-          <imageOffer>UbuntuServer</imageOffer>
-          <imageSku>17.04</imageSku>
-          <imageVersion>latest</imageVersion>
           <agentLaunchMethod>SSH</agentLaunchMethod>
           <preInstallSsh>true</preInstallSsh>
-          <initScript># Install java
-sudo apt-get -y update
-sudo apt-get install openjdk-8-jre openjdk-8-jre-headless openjdk-8-jdk -y
+          <initScript># Install Java JRE and JDK for Jenkins agent
+sudo dnf install -y java-1.8.0-openjdk java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel
 
-# Install git
-sudo apt-get install -y git
-
-# Install make
-sudo apt-get install -y make
-
-# Install gcc
-sudo apt-get install -y gcc
-
-echo &quot;USER=$USER&quot;
+# Install git, gcc and python
+sudo dnf install -y git gcc python
 
 # Install docker
-sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
-sudo apt-get -y update
-sudo apt-get install -y docker-ce
+sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+sudo dnf config-manager --set-enabled docker-ce-stable
+sudo dnf makecache
+sudo dnf install -y docker-ce
+sudo systemctl start docker
 sudo gpasswd -a ${USER} docker
 sudo chmod g+rw /var/run/docker.sock
 
 # Install go
 curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
-</initScript>
+sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
           <retentionTimeInMin>1</retentionTimeInMin>
@@ -263,13 +244,13 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
           <jvmOptions></jvmOptions>
           <templateDisabled>false</templateDisabled>
           <templateStatusDetails></templateStatusDetails>
-          <templateVerified>false</templateVerified>
+          <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
       </vmTemplates>
       <deploymentTimeout>1200</deploymentTimeout>
-      <approximateVirtualMachineCount>0</approximateVirtualMachineCount>
+      <approximateVirtualMachineCount>7</approximateVirtualMachineCount>
     </com.microsoft.azure.vmagent.AzureVMCloud>
   </clouds>
   <quietPeriod>5</quietPeriod>
@@ -290,11 +271,6 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
-        <string>clear-containers-agent-azure-ubuntu-16-04</string>
-        <string>clear-containers-proxy-azure-ubuntu-16-04</string>
-        <string>clear-containers-runtime-azure-ubuntu-16-04</string>
-        <string>clear-containers-shim-azure-ubuntu-16-04</string>
-        <string>clear-containers-tests-azure-ubuntu-16-04</string>
       </jobNames>
       <jobFilters/>
       <columns>
@@ -306,6 +282,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
         <hudson.views.LastDurationColumn/>
         <hudson.views.BuildButtonColumn/>
       </columns>
+      <includeRegex>.*-ubuntu-16-04-.*</includeRegex>
       <recurse>false</recurse>
     </listView>
     <listView>
@@ -316,11 +293,6 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
-        <string>clear-containers-agent-azure-ubuntu-17-04</string>
-        <string>clear-containers-proxy-azure-ubuntu-17-04</string>
-        <string>clear-containers-runtime-azure-ubuntu-17-04</string>
-        <string>clear-containers-shim-azure-ubuntu-17-04</string>
-        <string>clear-containers-tests-azure-ubuntu-17-04</string>
       </jobNames>
       <jobFilters/>
       <columns>
@@ -332,6 +304,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
         <hudson.views.LastDurationColumn/>
         <hudson.views.BuildButtonColumn/>
       </columns>
+      <includeRegex>.*-ubuntu-17-04-.*</includeRegex>
       <recurse>false</recurse>
     </listView>
     <listView>
@@ -342,7 +315,6 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
-        <string>clear-containers-tests-k8s</string>
       </jobNames>
       <jobFilters/>
       <columns>
@@ -354,6 +326,73 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz
         <hudson.views.LastDurationColumn/>
         <hudson.views.BuildButtonColumn/>
       </columns>
+      <includeRegex>.*-k8s</includeRegex>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Fedora_26</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <includeRegex>.*-fedora-26-.*</includeRegex>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Pull_Requests</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView[4]/jobNames/comparator"/>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <includeRegex>.*-PR</includeRegex>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Merges_to_master</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView[4]/jobNames/comparator"/>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
+      <includeRegex>.*-master</includeRegex>
       <recurse>false</recurse>
     </listView>
   </views>
