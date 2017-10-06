@@ -46,24 +46,7 @@
 
 set -e
 
-export PATH=$PATH:/usr/sbin
-export GOROOT=/usr/local/go
-mkdir -p $HOME/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-
-echo &quot;GOROOT=$GOROOT&quot;
-echo &quot;GOPATH=$GOPATH&quot;
-echo &quot;PATH=$PATH&quot;
-echo &quot;USER=$USER&quot;
-
-export CI=true
-go get github.com/clearcontainers/tests || true
-cd $GOPATH/src/github.com/clearcontainers/tests
-git fetch origin &amp;&amp; git checkout origin/master
-sudo -E PATH=$PATH bash -c &quot;.ci/setup_tests.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;.ci/setup.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;make check&quot;</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/tests&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

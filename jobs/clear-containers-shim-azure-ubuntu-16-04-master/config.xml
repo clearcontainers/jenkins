@@ -46,22 +46,11 @@
 
 set -e
 
-export GOROOT=/usr/local/go
-mkdir -p $HOME/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+cd $HOME
+git clone https://github.com/clearcontainers/tests.git
+cd tests
 
-echo &quot;GOROOT=$GOROOT&quot;
-echo &quot;GOPATH=$GOPATH&quot;
-echo &quot;PATH=$PATH&quot;
-echo &quot;USER=$USER&quot;
-
-export CI=true
-go get github.com/clearcontainers/shim || true
-cd $GOPATH/src/github.com/clearcontainers/shim
-git fetch origin &amp;&amp; git checkout origin/master
-sudo -E PATH=$PATH bash -c &quot;.ci/setup.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;.ci/run.sh&quot;</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/shim&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

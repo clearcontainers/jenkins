@@ -46,24 +46,13 @@
 
 set -e
 
-export GOROOT=/usr/local/go
-mkdir -p $HOME/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+export COVERALLS_REPO_TOKEN
 
-echo &quot;GOROOT=$GOROOT&quot;
-echo &quot;GOPATH=$GOPATH&quot;
-echo &quot;PATH=$PATH&quot;
-echo &quot;USER=$USER&quot;
+cd $HOME
+git clone https://github.com/clearcontainers/tests.git
+cd tests
 
-export CI=true
-go get github.com/mattn/goveralls
-go get github.com/clearcontainers/proxy || true
-cd $GOPATH/src/github.com/clearcontainers/proxy
-git fetch origin &amp;&amp; git checkout origin/master
-sudo -E PATH=$PATH bash -c &quot;.ci/setup.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;.ci/run.sh&quot;
-sudo -E PATH=$PATH bash -c &quot;$GOPATH/bin/goveralls -repotoken=$COVERALLS_REPO_TOKEN -coverprofile=profile.cov&quot;</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/proxy&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
