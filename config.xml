@@ -250,7 +250,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
       </vmTemplates>
       <deploymentTimeout>1200</deploymentTimeout>
-      <approximateVirtualMachineCount>7</approximateVirtualMachineCount>
+      <approximateVirtualMachineCount>3</approximateVirtualMachineCount>
     </com.microsoft.azure.vmagent.AzureVMCloud>
   </clouds>
   <quietPeriod>5</quietPeriod>
@@ -393,6 +393,29 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
         <hudson.views.BuildButtonColumn/>
       </columns>
       <includeRegex>.*-master</includeRegex>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Virtcontainers</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>virtcontainers-ubuntu-16-04-master</string>
+        <string>virtcontainers-ubuntu-16-04-PR</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+      </columns>
       <recurse>false</recurse>
     </listView>
   </views>

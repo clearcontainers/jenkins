@@ -13,7 +13,7 @@
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.5.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -75,12 +75,21 @@ echo &quot;GOROOT=$GOROOT&quot;&#xd;
 echo &quot;GOPATH=$GOPATH&quot;&#xd;
 echo &quot;PATH=$PATH&quot;&#xd;
 echo &quot;USER=$USER&quot;&#xd;
+echo &quot;WORKSPACE=$WORKSPACE&quot;&#xd;
 &#xd;
 cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
-.ci/teardown.sh</script>
+.ci/teardown.sh &quot;$WORKSPACE&quot;</script>
         </hudson.plugins.postbuildtask.TaskProperties>
       </tasks>
     </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>cc-proxy_*,cc-runtime_*,cc-shim_*,crio_*</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
     <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.4.7.1">
       <agentPostBuildAction>Delete agent after build execution (when idle).</agentPostBuildAction>
     </com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction>
