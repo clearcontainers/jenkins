@@ -22,3 +22,6 @@
 # Don't ignore plugins directory
 !plugins/
 !plugins/*/
+
+# Ignore CloudStatistics
+org.jenkinsci.plugins.cloudstats.CloudStatistics.xml
