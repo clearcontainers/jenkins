@@ -8,8 +8,12 @@
       <projectUrl>https://github.com/clearcontainers/tests/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.5.1">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -70,7 +74,7 @@
           <overrideGlobal>false</overrideGlobal>
         </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          <commitStatusContext>jenkins-ci-ubuntu-16-04</commitStatusContext>
+          <commitStatusContext>jenkins-ci-ubuntu-kubernetes</commitStatusContext>
           <triggeredStatus>Build triggered</triggeredStatus>
           <startedStatus>Build running</startedStatus>
           <statusUrl></statusUrl>
@@ -107,7 +111,9 @@ go get github.com/clearcontainers/tests || true
 cd $GOPATH/src/github.com/clearcontainers/tests
 .ci/install_bats.sh
 git fetch origin pull/${ghprbPullId}/head &amp;&amp; git checkout FETCH_HEAD &amp;&amp; git rebase origin/master
+git log -1
 cd integration/kubernetes
+sed -i &apos;s/docker.io//&apos; setup.sh
 ./setup.sh
 ./cleanup_env.sh
 ./init.sh
@@ -143,6 +149,7 @@ echo &quot;USER=$USER&quot;&#xd;
 &#xd;
 cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
 .ci/teardown.sh&#xd;
+journalctl --no-pager -u kubelet.service&#xd;
 &#xd;
 </script>
         </hudson.plugins.postbuildtask.TaskProperties>
