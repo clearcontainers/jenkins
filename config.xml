@@ -250,7 +250,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
       </vmTemplates>
       <deploymentTimeout>1200</deploymentTimeout>
-      <approximateVirtualMachineCount>3</approximateVirtualMachineCount>
+      <approximateVirtualMachineCount>1</approximateVirtualMachineCount>
     </com.microsoft.azure.vmagent.AzureVMCloud>
   </clouds>
   <quietPeriod>5</quietPeriod>
@@ -403,8 +403,12 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>virtcontainers-fedora-26-master</string>
+        <string>virtcontainers-fedora-26-PR</string>
         <string>virtcontainers-ubuntu-16-04-master</string>
         <string>virtcontainers-ubuntu-16-04-PR</string>
+        <string>virtcontainers-ubuntu-17-04-master</string>
+        <string>virtcontainers-ubuntu-17-04-PR</string>
       </jobNames>
       <jobFilters/>
       <columns>
