@@ -71,15 +71,7 @@ cd tests
           <RunIfJobSuccessful>false</RunIfJobSuccessful>
           <script>#!/bin/bash&#xd;
 &#xd;
-export GOROOT=/usr/local/go&#xd;
-export GOPATH=$HOME/go&#xd;
-export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH&#xd;
-&#xd;
-echo &quot;GOROOT=$GOROOT&quot;&#xd;
-echo &quot;GOPATH=$GOPATH&quot;&#xd;
-echo &quot;PATH=$PATH&quot;&#xd;
-echo &quot;USER=$USER&quot;&#xd;
-echo &quot;WORKSPACE=$WORKSPACE&quot;&#xd;
+export GOPATH=$WORKSPACE/go&#xd;
 &#xd;
 cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
 .ci/teardown.sh &quot;$WORKSPACE&quot;</script>
