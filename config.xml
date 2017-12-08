@@ -4,11 +4,11 @@
     <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
     <string>OldData</string>
   </disabledAdministrativeMonitors>
-  <version>2.73.1</version>
+  <version>2.89.1</version>
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
-  <authorizationStrategy class="org.jenkinsci.plugins.GithubAuthorizationStrategy" plugin="github-oauth@0.27">
+  <authorizationStrategy class="org.jenkinsci.plugins.GithubAuthorizationStrategy" plugin="github-oauth@0.28.1">
     <rootACL>
       <organizationNameList class="linked-list">
         <string></string>
@@ -48,7 +48,7 @@
   <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
   <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
   <clouds>
-    <com.microsoft.azure.vmagent.AzureVMCloud plugin="azure-vm-agents@0.4.7.1">
+    <com.microsoft.azure.vmagent.AzureVMCloud plugin="azure-vm-agents@0.5.0">
       <name>jenkins-azure-cloud</name>
       <cloudName>jenkins-azure-cloud</cloudName>
       <credentialsId>1073bb96-1dc9-493d-a716-5d32119156d9</credentialsId>
@@ -111,7 +111,7 @@ curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
-          <retentionTimeInMin>1</retentionTimeInMin>
+          <retentionTimeInMin>0</retentionTimeInMin>
           <virtualNetworkName></virtualNetworkName>
           <virtualNetworkResourceGroupName></virtualNetworkResourceGroupName>
           <subnetName></subnetName>
@@ -123,6 +123,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
+          <retentionStrategy class="com.microsoft.azure.vmagent.AzureVMCloudOnceRetentionStrategy"/>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
         <com.microsoft.azure.vmagent.AzureVMAgentTemplate>
           <templateName>jenkins-azure-vm-ubuntu-17-04-template</templateName>
@@ -178,7 +179,7 @@ curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
-          <retentionTimeInMin>1</retentionTimeInMin>
+          <retentionTimeInMin>0</retentionTimeInMin>
           <virtualNetworkName></virtualNetworkName>
           <virtualNetworkResourceGroupName></virtualNetworkResourceGroupName>
           <subnetName></subnetName>
@@ -190,6 +191,7 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
+          <retentionStrategy class="com.microsoft.azure.vmagent.AzureVMCloudOnceRetentionStrategy"/>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
         <com.microsoft.azure.vmagent.AzureVMAgentTemplate>
           <templateName>jenkins-azure-vm-fedora-26</templateName>
@@ -235,7 +237,7 @@ curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <credentialsId>e235e5e5-9648-46a4-a774-e95e9ef96b1f</credentialsId>
           <agentWorkspace>/home/jenkins/jenkins_slave</agentWorkspace>
-          <retentionTimeInMin>1</retentionTimeInMin>
+          <retentionTimeInMin>0</retentionTimeInMin>
           <virtualNetworkName></virtualNetworkName>
           <virtualNetworkResourceGroupName></virtualNetworkResourceGroupName>
           <subnetName></subnetName>
@@ -247,10 +249,11 @@ sudo tar -C /usr/local -xzf go1.8.3.linux-amd64.tar.gz</initScript>
           <templateVerified>true</templateVerified>
           <executeInitScriptAsRoot>false</executeInitScriptAsRoot>
           <doNotUseMachineIfInitFails>true</doNotUseMachineIfInitFails>
+          <retentionStrategy class="com.microsoft.azure.vmagent.AzureVMCloudOnceRetentionStrategy"/>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
       </vmTemplates>
       <deploymentTimeout>1200</deploymentTimeout>
-      <approximateVirtualMachineCount>1</approximateVirtualMachineCount>
+      <approximateVirtualMachineCount>0</approximateVirtualMachineCount>
     </com.microsoft.azure.vmagent.AzureVMCloud>
   </clouds>
   <quietPeriod>5</quietPeriod>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<hudson.plugins.tfs.TeamPluginGlobalConfig plugin="tfs@5.121.0">
+<hudson.plugins.tfs.TeamPluginGlobalConfig plugin="tfs@5.126.0">
   <collectionConfigurations/>
   <configFolderPerNode>false</configFolderPerNode>
   <enableTeamPushTriggerForAllJobs>false</enableTeamPushTriggerForAllJobs>
