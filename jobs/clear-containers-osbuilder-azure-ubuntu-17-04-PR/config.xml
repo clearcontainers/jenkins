@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.1">
+      <projectUrl>https://github.com/clearcontainers/osbuilder/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.4">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <refspec>+refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*</refspec>
+        <url>https://github.com/clearcontainers/osbuilder.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>${sha1}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <assignedNode>ubuntu_17_04_azure_cloud</assignedNode>
+  <canRoam>false</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.39.0">
+      <spec>H/5 * * * *</spec>
+      <configVersion>3</configVersion>
+      <adminlist>clearcontainersbot sboeuf</adminlist>
+      <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
+      <orgslist></orgslist>
+      <cron>H/5 * * * *</cron>
+      <buildDescTemplate></buildDescTemplate>
+      <onlyTriggerPhrase>false</onlyTriggerPhrase>
+      <useGitHubHooks>true</useGitHubHooks>
+      <permitAll>true</permitAll>
+      <whitelist></whitelist>
+      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+      <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
+      <whiteListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch></branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </whiteListTargetBranches>
+      <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch></branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </blackListTargetBranches>
+      <gitHubAuthId>c342a247-b007-4ff6-b547-8cc6f6a2cfc6</gitHubAuthId>
+      <triggerPhrase></triggerPhrase>
+      <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListCommitAuthor></blackListCommitAuthor>
+      <blackListLabels></blackListLabels>
+      <whiteListLabels></whiteListLabels>
+      <includedRegions></includedRegions>
+      <excludedRegions></excludedRegions>
+      <extensions>
+        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
+          <overrideGlobal>false</overrideGlobal>
+        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
+        <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+          <commitStatusContext>jenkins-ci-ubuntu-17-04</commitStatusContext>
+          <triggeredStatus>Build triggered</triggeredStatus>
+          <startedStatus>Build running</startedStatus>
+          <statusUrl></statusUrl>
+          <addTestResults>false</addTestResults>
+        </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+      </extensions>
+    </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+  </triggers>
+  <concurrentBuild>true</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+
+set -e
+
+export ghprbPullId
+export ghprbTargetBranch
+export COVERALLS_REPO_TOKEN
+
+cc_repo=&quot;github.com/clearcontainers/osbuilder&quot;
+
+# Put our go area into the Jenkins job WORKSPACE tree
+export GOPATH=${WORKSPACE}/go
+mkdir -p ${GOPATH}
+
+# Export all environment variables needed.
+export GOROOT=&quot;/usr/local/go&quot;
+export PATH=${GOPATH}/bin:/usr/local/go/bin:/usr/sbin:${PATH}
+
+# Get the repository and move to the correct commit
+go get ${cc_repo} || true
+pushd ${GOPATH}/src/${cc_repo}
+if [ ${ghprbPullId} ] &amp;&amp; [ ${ghprbTargetBranch} ]
+then
+	# For PRs we rebase the PR commits onto the defined target branch
+	git fetch origin pull/${ghprbPullId}/head &amp;&amp; git checkout FETCH_HEAD &amp;&amp; git rebase origin/${ghprbTargetBranch}
+else
+	# Othewise we test the master branch
+	git fetch origin &amp;&amp; git checkout origin/master
+fi
+
+# Set up the distro environment. Get, build and install all the latest
+# components
+.ci/ci-setup.sh
+
+# Run the test suite
+.ci/ci-run.sh
+
+popd
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.4.8">
+      <agentPostBuildAction>Shutdown Azure agent after build execution.</agentPostBuildAction>
+    </com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
+      <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
+        <timeoutSecondsString>300</timeoutSecondsString>
+      </strategy>
+      <operationList/>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
+      <colorMapName>xterm</colorMapName>
+    </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
+  </buildWrappers>
+</project>
