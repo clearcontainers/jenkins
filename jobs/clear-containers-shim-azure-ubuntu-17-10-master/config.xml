@@ -4,20 +4,20 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.0">
-      <projectUrl>https://github.com/clearcontainers/tests/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.1">
+      <projectUrl>https://github.com/clearcontainers/shim/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.7.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/clearcontainers/tests.git</url>
+        <url>https://github.com/clearcontainers/shim.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -29,13 +29,13 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <assignedNode>ubuntu_17_04_azure_cloud</assignedNode>
+  <assignedNode>ubuntu_17_10_azure_cloud</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.28.0">
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.28.1">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
@@ -46,7 +46,11 @@
 
 set -e
 
-.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/tests&quot;</command>
+cd $HOME
+git clone https://github.com/clearcontainers/tests.git
+cd tests
+
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/shim&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -82,18 +86,18 @@ cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
-    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.4.7.1">
-      <agentPostBuildAction>Delete agent after build execution (when idle).</agentPostBuildAction>
+    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.6.0">
+      <agentPostBuildAction>Shutdown Azure agent after build execution.</agentPostBuildAction>
     </com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction>
   </publishers>
   <buildWrappers>
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.18">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
       <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
         <timeoutSecondsString>300</timeoutSecondsString>
       </strategy>
       <operationList/>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.9"/>
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>

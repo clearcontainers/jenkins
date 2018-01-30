@@ -4,84 +4,40 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.0">
-      <projectUrl>https://github.com/clearcontainers/runtime/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.1">
+      <projectUrl>https://github.com/clearcontainers/agent/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
       <autoRebuild>false</autoRebuild>
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.0">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.7.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
-        <name>origin</name>
-        <refspec>+refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*</refspec>
-        <url>https://github.com/clearcontainers/runtime.git</url>
+        <url>https://github.com/clearcontainers/agent.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
       <hudson.plugins.git.BranchSpec>
-        <name>${sha1}</name>
+        <name>refs/heads/master</name>
       </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <assignedNode>ubuntu_17_04_azure_cloud</assignedNode>
+  <assignedNode>ubuntu_17_10_azure_cloud</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers>
-    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.39.0">
-      <spec>H/5 * * * *</spec>
-      <configVersion>3</configVersion>
-      <adminlist></adminlist>
-      <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
-      <orgslist></orgslist>
-      <cron>H/5 * * * *</cron>
-      <buildDescTemplate></buildDescTemplate>
-      <onlyTriggerPhrase>false</onlyTriggerPhrase>
-      <useGitHubHooks>true</useGitHubHooks>
-      <permitAll>true</permitAll>
-      <whitelist></whitelist>
-      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
-      <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
-      <whiteListTargetBranches>
-        <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch></branch>
-        </org.jenkinsci.plugins.ghprb.GhprbBranch>
-      </whiteListTargetBranches>
-      <blackListTargetBranches>
-        <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch></branch>
-        </org.jenkinsci.plugins.ghprb.GhprbBranch>
-      </blackListTargetBranches>
-      <gitHubAuthId>c342a247-b007-4ff6-b547-8cc6f6a2cfc6</gitHubAuthId>
-      <triggerPhrase></triggerPhrase>
-      <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
-      <blackListCommitAuthor></blackListCommitAuthor>
-      <blackListLabels></blackListLabels>
-      <whiteListLabels></whiteListLabels>
-      <includedRegions></includedRegions>
-      <excludedRegions></excludedRegions>
-      <extensions>
-        <org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
-          <overrideGlobal>false</overrideGlobal>
-        </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
-        <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          <commitStatusContext>jenkins-ci-ubuntu-17-04</commitStatusContext>
-          <triggeredStatus>Build triggered</triggeredStatus>
-          <startedStatus>Build running</startedStatus>
-          <statusUrl></statusUrl>
-          <addTestResults>false</addTestResults>
-        </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-      </extensions>
-    </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.28.1">
+      <spec></spec>
+    </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
   <concurrentBuild>true</concurrentBuild>
   <builders>
@@ -90,14 +46,11 @@
 
 set -e
 
-export ghprbPullId
-export ghprbTargetBranch
-
 cd $HOME
 git clone https://github.com/clearcontainers/tests.git
 cd tests
 
-.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/runtime&quot;</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/agent&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
@@ -133,18 +86,18 @@ cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
       <defaultExcludes>true</defaultExcludes>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
-    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.4.7.1">
-      <agentPostBuildAction>Delete agent after build execution (when idle).</agentPostBuildAction>
+    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.6.0">
+      <agentPostBuildAction>Shutdown Azure agent after build execution.</agentPostBuildAction>
     </com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction>
   </publishers>
   <buildWrappers>
-    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.18">
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.19">
       <strategy class="hudson.plugins.build_timeout.impl.NoActivityTimeOutStrategy">
         <timeoutSecondsString>300</timeoutSecondsString>
       </strategy>
       <operationList/>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.9"/>
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>

@@ -4,11 +4,11 @@
     <string>hudson.diagnosis.ReverseProxySetupMonitor</string>
     <string>OldData</string>
   </disabledAdministrativeMonitors>
-  <version>2.89.2</version>
+  <version>2.89.3</version>
   <numExecutors>2</numExecutors>
   <mode>NORMAL</mode>
   <useSecurity>true</useSecurity>
-  <authorizationStrategy class="org.jenkinsci.plugins.GithubAuthorizationStrategy" plugin="github-oauth@0.28.1">
+  <authorizationStrategy class="org.jenkinsci.plugins.GithubAuthorizationStrategy" plugin="github-oauth@0.29">
     <rootACL>
       <organizationNameList class="linked-list">
         <string></string>
@@ -36,7 +36,7 @@
     <githubWebUri>https://github.com</githubWebUri>
     <githubApiUri>https://api.github.com</githubApiUri>
     <clientID>dde1b1de183181e018b7</clientID>
-    <clientSecret>{AQAAABAAAAAwDeNcgD4ssrccLu7TFy1zRhVBe7oa9IStg8V4oZS+PlaH8QG8yIutqTrA4ln4+p1d4InvwlUL60JIJJHT7aG4+Q==}</clientSecret>
+    <clientSecret>{AQAAABAAAAAw6zD2Dg/3fyQ9YDgwqJ1bwiXRx8jjqNrUt/YVIFUu9r8toONto47NHe5Xnr8FUjjb4MTzjb6U1m//ErASh4xRdw==}</clientSecret>
     <oauthScopes>read:org,user:email</oauthScopes>
   </securityRealm>
   <disableRememberMe>false</disableRememberMe>
@@ -127,9 +127,9 @@ sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
           <retentionStrategy class="com.microsoft.azure.vmagent.AzureVMCloudOnceRetentionStrategy"/>
         </com.microsoft.azure.vmagent.AzureVMAgentTemplate>
         <com.microsoft.azure.vmagent.AzureVMAgentTemplate>
-          <templateName>jenkins-azure-vm-ubuntu-17-04-template</templateName>
-          <templateDesc>Ubuntu 17.04 Template for Jenkins VM agents on Azure</templateDesc>
-          <labels>ubuntu_17_04_azure_cloud</labels>
+          <templateName>jenkins-azure-vm-ubuntu-17-10-template</templateName>
+          <templateDesc>Ubuntu 17.10 Template for Jenkins VM agents on Azure</templateDesc>
+          <labels>ubuntu_17_10_azure_cloud</labels>
           <location>West US 2</location>
           <virtualMachineSize>Standard_D4s_v3</virtualMachineSize>
           <storageAccountNameReferenceType>new</storageAccountNameReferenceType>
@@ -141,16 +141,21 @@ sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
           <usageMode>EXCLUSIVE</usageMode>
           <shutdownOnIdle>false</shutdownOnIdle>
           <imageTopLevelType>advanced</imageTopLevelType>
-          <imageReferenceType>custom</imageReferenceType>
+          <imageReferenceType>reference</imageReferenceType>
           <builtInImage>Ubuntu 16.04 LTS</builtInImage>
           <isInstallGit>false</isInstallGit>
           <isInstallMaven>false</isInstallMaven>
           <isInstallDocker>false</isInstallDocker>
-          <image>https://ccjenkins.blob.core.windows.net/container-ccjenkins/ubuntu-17-04-20170922.vhd</image>
           <osType>Linux</osType>
+          <imagePublisher>Canonical</imagePublisher>
+          <imageOffer>UbuntuServer</imageOffer>
+          <imageSku>17.10</imageSku>
+          <imageVersion>latest</imageVersion>
           <agentLaunchMethod>SSH</agentLaunchMethod>
           <preInstallSsh>true</preInstallSsh>
-          <initScript># Stop unattended-upgrades service
+          <initScript>set -x
+
+# Stop unattended-upgrades service
 sudo systemctl stop unattended-upgrades
 sudo systemctl disable unattended-upgrades
 sudo pkill -f dpkg
@@ -230,6 +235,7 @@ sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/dock
 sudo dnf config-manager --set-enabled docker-ce-stable
 sudo dnf makecache
 sudo dnf install -y docker-ce
+
 sudo systemctl start docker
 sudo gpasswd -a ${USER} docker
 sudo chmod g+rw /var/run/docker.sock
@@ -293,12 +299,25 @@ sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
     </listView>
     <listView>
       <owner class="hudson" reference="../../.."/>
-      <name>Ubuntu_17.04</name>
+      <name>Ubuntu_17.10</name>
       <filterExecutors>false</filterExecutors>
       <filterQueue>false</filterQueue>
       <properties class="hudson.model.View$PropertyList"/>
       <jobNames>
         <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
+        <string>clear-containers-agent-azure-ubuntu-17-10-master</string>
+        <string>clear-containers-agent-azure-ubuntu-17-10-PR</string>
+        <string>clear-containers-osbuilder-azure-ubuntu-17-10-PR</string>
+        <string>clear-containers-proxy-azure-ubuntu-17-10-master</string>
+        <string>clear-containers-proxy-azure-ubuntu-17-10-PR</string>
+        <string>clear-containers-runtime-azure-ubuntu-17-10-master</string>
+        <string>clear-containers-runtime-azure-ubuntu-17-10-PR</string>
+        <string>clear-containers-shim-azure-ubuntu-17-10-master</string>
+        <string>clear-containers-shim-azure-ubuntu-17-10-PR</string>
+        <string>clear-containers-tests-azure-ubuntu-17-10-master</string>
+        <string>clear-containers-tests-azure-ubuntu-17-10-PR</string>
+        <string>virtcontainers-ubuntu-17-10-master</string>
+        <string>virtcontainers-ubuntu-17-10-PR</string>
       </jobNames>
       <jobFilters/>
       <columns>
@@ -413,8 +432,8 @@ sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
         <string>virtcontainers-fedora-26-PR</string>
         <string>virtcontainers-ubuntu-16-04-master</string>
         <string>virtcontainers-ubuntu-16-04-PR</string>
-        <string>virtcontainers-ubuntu-17-04-master</string>
-        <string>virtcontainers-ubuntu-17-04-PR</string>
+        <string>virtcontainers-ubuntu-17-10-master</string>
+        <string>virtcontainers-ubuntu-17-10-PR</string>
       </jobNames>
       <jobFilters/>
       <columns>
@@ -432,6 +451,9 @@ sudo tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
   <primaryView>all</primaryView>
   <slaveAgentPort>-1</slaveAgentPort>
   <label></label>
+  <crumbIssuer class="hudson.security.csrf.DefaultCrumbIssuer">
+    <excludeClientIPFromCrumb>true</excludeClientIPFromCrumb>
+  </crumbIssuer>
   <nodeProperties/>
   <globalNodeProperties/>
 </hudson>

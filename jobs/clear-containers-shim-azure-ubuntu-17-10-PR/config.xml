@@ -5,7 +5,7 @@
   <keepDependencies>false</keepDependencies>
   <properties>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.28.1">
-      <projectUrl>https://github.com/clearcontainers/osbuilder/</projectUrl>
+      <projectUrl>https://github.com/clearcontainers/shim/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.27">
@@ -13,13 +13,13 @@
       <rebuildDisabled>false</rebuildDisabled>
     </com.sonyericsson.rebuild.RebuildSettings>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.7.0">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/pull/${ghprbPullId}/*:refs/remotes/origin/pr/${ghprbPullId}/*</refspec>
-        <url>https://github.com/clearcontainers/osbuilder.git</url>
+        <url>https://github.com/clearcontainers/shim.git</url>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -31,7 +31,7 @@
     <submoduleCfg class="list"/>
     <extensions/>
   </scm>
-  <assignedNode>ubuntu_17_04_azure_cloud</assignedNode>
+  <assignedNode>ubuntu_17_10_azure_cloud</assignedNode>
   <canRoam>false</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -40,7 +40,7 @@
     <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.39.0">
       <spec>H/5 * * * *</spec>
       <configVersion>3</configVersion>
-      <adminlist>clearcontainersbot sboeuf</adminlist>
+      <adminlist></adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist></orgslist>
       <cron>H/5 * * * *</cron>
@@ -74,7 +74,7 @@
           <overrideGlobal>false</overrideGlobal>
         </org.jenkinsci.plugins.ghprb.extensions.build.GhprbCancelBuildsOnUpdate>
         <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
-          <commitStatusContext>jenkins-ci-ubuntu-17-04</commitStatusContext>
+          <commitStatusContext>jenkins-ci-ubuntu-17-10</commitStatusContext>
           <triggeredStatus>Build triggered</triggeredStatus>
           <startedStatus>Build running</startedStatus>
           <statusUrl></statusUrl>
@@ -92,43 +92,48 @@ set -e
 
 export ghprbPullId
 export ghprbTargetBranch
-export COVERALLS_REPO_TOKEN
 
-cc_repo=&quot;github.com/clearcontainers/osbuilder&quot;
+cd $HOME
+git clone https://github.com/clearcontainers/tests.git
+cd tests
 
-# Put our go area into the Jenkins job WORKSPACE tree
-export GOPATH=${WORKSPACE}/go
-mkdir -p ${GOPATH}
-
-# Export all environment variables needed.
-export GOROOT=&quot;/usr/local/go&quot;
-export PATH=${GOPATH}/bin:/usr/local/go/bin:/usr/sbin:${PATH}
-
-# Get the repository and move to the correct commit
-go get ${cc_repo} || true
-pushd ${GOPATH}/src/${cc_repo}
-if [ ${ghprbPullId} ] &amp;&amp; [ ${ghprbTargetBranch} ]
-then
-	# For PRs we rebase the PR commits onto the defined target branch
-	git fetch origin pull/${ghprbPullId}/head &amp;&amp; git checkout FETCH_HEAD &amp;&amp; git rebase origin/${ghprbTargetBranch}
-else
-	# Othewise we test the master branch
-	git fetch origin &amp;&amp; git checkout origin/master
-fi
-
-# Set up the distro environment. Get, build and install all the latest
-# components
-.ci/ci-setup.sh
-
-# Run the test suite
-.ci/ci-run.sh
-
-popd
-</command>
+.ci/jenkins_job_build.sh &quot;github.com/clearcontainers/shim&quot;</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.4.8">
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>Build was aborted</logText>
+              <operator>OR</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>Build step &apos;Execute shell&apos; marked build as failure</logText>
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>#!/bin/bash&#xd;
+&#xd;
+export GOPATH=$WORKSPACE/go&#xd;
+&#xd;
+cd $GOPATH/src/github.com/clearcontainers/tests&#xd;
+.ci/teardown.sh &quot;$WORKSPACE&quot;</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>cc-proxy_*,cc-runtime_*,cc-shim_*,crio_*</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+      <fingerprint>false</fingerprint>
+      <defaultExcludes>true</defaultExcludes>
+      <caseSensitive>true</caseSensitive>
+    </hudson.tasks.ArtifactArchiver>
+    <com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction plugin="azure-vm-agents@0.6.0">
       <agentPostBuildAction>Shutdown Azure agent after build execution.</agentPostBuildAction>
     </com.microsoft.azure.vmagent.AzureVMAgentPostBuildAction>
   </publishers>
@@ -139,7 +144,7 @@ popd
       </strategy>
       <operationList/>
     </hudson.plugins.build__timeout.BuildTimeoutWrapper>
-    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.8"/>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.9"/>
     <hudson.plugins.ansicolor.AnsiColorBuildWrapper plugin="ansicolor@0.5.2">
       <colorMapName>xterm</colorMapName>
     </hudson.plugins.ansicolor.AnsiColorBuildWrapper>
