@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<org.jenkinsci.plugins.ghprb.GhprbTrigger_-DescriptorImpl plugin="ghprb@1.39.0">
+<org.jenkinsci.plugins.ghprb.GhprbTrigger_-DescriptorImpl plugin="ghprb@1.40.0">
   <configVersion>1</configVersion>
   <whitelistPhrase>.*add\W+to\W+whitelist.*</whitelistPhrase>
   <okToTestPhrase>.*ok\W+to\W+test.*</okToTestPhrase>
